@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/Moonlight-Zhao/go-project-example/cotroller"
+	"github.com/Moonlight-Zhao/go-project-example/controller"
 	"github.com/Moonlight-Zhao/go-project-example/repository"
 	"gopkg.in/gin-gonic/gin.v1"
+	"net/http"
 	"os"
 )
 
@@ -14,9 +15,19 @@ func main() {
 	r := gin.Default()
 	r.GET("/community/page/get/:id", func(c *gin.Context) {
 		topicId := c.Param("id")
-		data := cotroller.QueryPageInfo(topicId)
+		data := controller.QueryPageInfo(topicId)
 		c.JSON(200, data)
 	})
+	r.POST("/community/topic/post", func(c *gin.Context) {
+		var topic repository.Topic
+		if err := c.ShouldBind(&topic); err == nil {
+			data := controller.SaveTopic(&topic)
+			c.JSON(http.StatusOK, data)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+	})
+
 	err := r.Run()
 	if err != nil {
 		return
