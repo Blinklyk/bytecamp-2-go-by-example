@@ -4,18 +4,24 @@ import (
 	"bufio"
 	"encoding/json"
 	"os"
+	"sync"
 )
 
+type TopicIndexMap struct {
+	data map[int64]*Topic
+	sync.RWMutex
+}
+
 var (
-	topicIndexMap map[int64]*Topic
+	topicIndexMap TopicIndexMap
 	postIndexMap  map[int64][]*Post
 )
 
-func Init(filePath string) error{
-	if err := initTopicIndexMap(filePath);err!=nil{
+func Init(filePath string) error {
+	if err := initTopicIndexMap(filePath); err != nil {
 		return err
 	}
-	if err := initPostIndexMap(filePath);err!=nil{
+	if err := initPostIndexMap(filePath); err != nil {
 		return err
 	}
 	return nil
@@ -36,11 +42,11 @@ func initTopicIndexMap(filePath string) error {
 		}
 		topicTmpMap[topic.Id] = &topic
 	}
-	topicIndexMap = topicTmpMap
+	topicIndexMap.data = topicTmpMap
 	return nil
 }
 
-func initPostIndexMap(filePath string) error{
+func initPostIndexMap(filePath string) error {
 	open, err := os.Open(filePath + "post")
 	if err != nil {
 		return err

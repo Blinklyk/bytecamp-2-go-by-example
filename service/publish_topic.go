@@ -15,8 +15,7 @@ func SaveTopic(topic *repository.Topic) error {
 	// 雪花生成ID, 填充
 	topic.Id = node.GetId()
 	// 生成创建时间，填充
-	//topic.CreateTime = time.Now().Unix()
-	topic.CreateTime = repository.UnixTime(time.Now())
+	topic.CreateTime = time.Now().Unix()
 	err := repository.NewTopicDaoInstance().SaveTopic(topic)
 	if err != nil {
 		return err
